@@ -10,11 +10,14 @@ import { AiChat } from "@/components/AiChat"
 export default function Dashboard() {
   const { user } = useAuth()
 
-  // Mock data for recent cases
-  const recentCases = [
-    { id: 1, title: "Traffic Accident Claim", date: "April 25, 2025", status: "In Progress" },
-    { id: 2, title: "Property Dispute", date: "April 20, 2025", status: "Completed" },
+  // Mock data for all cases
+  const allCases = [
+    { id: 1, title: "Traffic Accident Claim", date: "April 25, 2025", status: "In Progress", owner: "user1@example.com" },
+    { id: 2, title: "Property Dispute", date: "April 20, 2025", status: "Completed", owner: "prakhar.sahu.2701@gmail.com" },
   ]
+
+  // Mock data for the cases for user ONLY
+  const myCases = allCases.filter((caseItem) => caseItem.owner === user?.email)
 
   return (
     <div className="space-y-6">
@@ -33,7 +36,7 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-gray-500">Total Cases</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{recentCases.length}</div>
+            <div className="text-3xl font-bold">{allCases.length}</div>
           </CardContent>
         </Card>
 
@@ -42,7 +45,9 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-gray-500">In Progress</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">1</div>
+            <div className="text-3xl font-bold">
+              {myCases.filter((caseItem) => caseItem.status === "In Progress").length}
+            </div>
           </CardContent>
         </Card>
 
@@ -51,7 +56,9 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium text-gray-500">Completed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">1</div>
+            <div className="text-3xl font-bold">
+              {myCases.filter((caseItem) => caseItem.status === "Completed").length}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -64,9 +71,9 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {recentCases.length > 0 ? (
+        {myCases.length > 0 ? (
           <div className="space-y-4">
-            {recentCases.map((caseItem) => (
+            {myCases.map((caseItem) => (
               <Card key={caseItem.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 flex items-center justify-between">
                   <div className="flex items-start space-x-4">
