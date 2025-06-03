@@ -60,69 +60,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Login function
   const login = async (email: string, password: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      // For demo purposes, we'll simulate a successful login
-      const mockUser = {
-        id: "user_123",
-        name: email.split("@")[0],
-        email,
+      const users = JSON.parse(localStorage.getItem("lawmate_users") || "[]");
+      const foundUser = users.find(
+        (user: any) => user.email === email && user.password === password
+      );
+
+      if (!foundUser) {
+        throw new Error("Invalid credentials");
       }
 
-      // Store the user in localStorage
-      localStorage.setItem("lawmate_user", JSON.stringify(mockUser))
-      setUser(mockUser)
+      // Set current user
+      localStorage.setItem("lawmate_user", JSON.stringify(foundUser));
+      setUser(foundUser);
 
       toast({
         title: "Login successful",
         description: "Welcome back to LawMate!",
-      })
+      });
 
-      router.push("/dashboard")
+      router.push("/dashboard");
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Login failed",
         description: "Invalid email or password",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Signup function
   const signup = async (name: string, email: string, password: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      // For demo purposes, we'll simulate a successful signup
-      const mockUser = {
+      const newUser = {
         id: "user_" + Math.random().toString(36).substr(2, 9),
         name,
         email,
-      }
+        password,
+      };
 
-      // Store the user in localStorage
-      localStorage.setItem("lawmate_user", JSON.stringify(mockUser))
-      setUser(mockUser)
+      // Save user to "database"
+      const users = JSON.parse(localStorage.getItem("lawmate_users") || "[]");
+      users.push(newUser);
+      localStorage.setItem("lawmate_users", JSON.stringify(users));
+
+      // Set logged-in user
+      localStorage.setItem("lawmate_user", JSON.stringify(newUser));
+      setUser(newUser);
 
       toast({
         title: "Account created",
         description: "Welcome to LawMate!",
-      })
+      });
 
-      router.push("/dashboard")
+      router.push("/dashboard");
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Signup failed",
         description: "Could not create your account",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+
 
   // Logout function
   const logout = () => {
